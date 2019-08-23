@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>图片懒加载</title>
     <link rel="stylesheet" href="./test.css">
-    <script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+    <script src="./test.js"></script>
 </head>
 
 <body>
@@ -23,49 +23,6 @@
         }
     }
     getPicList()
-
-
-    class LazyLoad {
-
-        constructor(times = 200, nodeList = 'lazy-load', height = 100) {
-            this.times = times
-            this.nodeList = nodeList
-            this.height = height
-        }
-
-        showPic(nodeList, height) {
-            const picArr = document.querySelectorAll('.' + nodeList)
-            const body = document.documentElement || document.body
-            const bodyH = body.scrollTop + body.clientHeight
-            picArr.forEach(item => {
-                if ((bodyH - item.offsetTop) > -height && !item.getAttribute('data-lazy-show')) {
-                    let src = item.getAttribute('data-src')
-                    item.setAttribute('src', src)
-                    item.setAttribute('data-lazy-show', true)
-                    item.removeAttribute('data-src')
-                }
-            })
-        }
-
-        throttle(callback, times, nodeList, height) {
-            let timer = null
-            return () => {
-                if (timer) {
-                    return
-                }
-                timer = setTimeout(() => {
-                    callback(nodeList, height)
-                    timer = null
-                }, times)
-            }
-        }
-
-        run() {
-            this.showPic(this.nodeList, 0)
-            window.addEventListener('scroll', this.throttle(this.showPic, this.times, this.nodeList, this.height))
-        }
-    }
-
     const lazy = new LazyLoad()
     lazy.run()
     </script>
