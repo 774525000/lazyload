@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>图片懒加载</title>
+    <link rel="stylesheet" href="./test.css">
+    <script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.js"></script>
+</head>
+
+<body>
+    <div>
+        <ul id='pics'>
+        </ul>
+    </div>
+    <script>
+    const getPicList = () => {
+        const pics = document.querySelector('#pics')
+        for (let i = 0; i < 100; i++) {
+            pics.innerHTML += `<li>
+                <img src="" alt="" data-src='https://img11.360buyimg.com/n1/jfs/t1/6350/31/9335/346484/5c136a1dE32b7b86b/cfaa654ebfa098db.jpg' class="lazy-load">
+            </li>`
+        }
+    }
+    getPicList()
+
+
+    class LazyLoad {
+
+        constructor(times = 200, nodeList = 'lazy-load', height = 100) {
+            this.times = times
+            this.nodeList = nodeList
+            this.height = height
+        }
+
+        showPic(nodeList, height) {
+            const picArr = document.querySelectorAll('.' + nodeList)
+            const body = document.documentElement || document.body
+            const bodyH = body.scrollTop + body.clientHeight
+            picArr.forEach(item => {
+                if ((bodyH - item.offsetTop) > -height && !item.getAttribute('data-lazy-show')) {
+                    let src = item.getAttribute('data-src')
+                    item.setAttribute('src', src)
+                    item.setAttribute('data-lazy-show', true)
+                    item.removeAttribute('data-src')
+                }
+            })
+        }
+
+        throttle(callback, times, nodeList, height) {
+            let timer = null
+            return () => {
+                if (timer) {
+                    return
+                }
+                timer = setTimeout(() => {
+                    callback(nodeList, height)
+                    timer = null
+                }, times)
+            }
+        }
+
+        run() {
+            this.showPic(this.nodeList, 0)
+            window.addEventListener('scroll', this.throttle(this.showPic, this.times, this.nodeList, this.height))
+        }
+    }
+
+    const lazy = new LazyLoad()
+    lazy.run()
+    </script>
+</body>
+
+</html>
